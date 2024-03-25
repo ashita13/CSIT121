@@ -31,3 +31,9 @@ class System:
         if output_organ:
             return ", ".join(output_organ)
         else: return "None"
+    
+    # get value according to key project title
+    def get_org(self, p_title):
+        output_organ = self.organs.get(p_title)
+        return output_organ
+    
