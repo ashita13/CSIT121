@@ -1,4 +1,3 @@
-from system.company.project.company1 import Company
 class Project:
     def __init__(self, project_title, location, star, score, date_certified, rating_tool, company, status=""):
         self.project_title = project_title
