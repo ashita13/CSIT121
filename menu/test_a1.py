@@ -1,5 +1,4 @@
 import unittest
-import unittest
 
 # define a test project class with outputs
 class TestProject:

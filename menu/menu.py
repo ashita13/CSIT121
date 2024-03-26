@@ -119,5 +119,3 @@ class Menu:
         print("Successfully quit") 
         sys.exit()
             
-menu = Menu()
-menu.run()
