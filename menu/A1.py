@@ -118,4 +118,8 @@ class Menu:
     def quit(self):
         print("Successfully quit") 
         sys.exit()
-            
+
+# run the program from this script 
+if __name__ == "__main__":
+    program = Menu()
+    program.run()
