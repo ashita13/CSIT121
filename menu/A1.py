@@ -29,40 +29,47 @@ class Menu:
         print("Now you can add new project")
         new_ptitle = str(input("Please enter new project name: "))
         new_location = str(input("Please enter location of the project: "))
-        state_au = ["ACT", "International", "National", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WE"]
+        state_au = ["ACT", "INTERNATIONAL", "NATIONAL", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WE"]
         while True:
             try:    
                 new_state = str(input("Please enter state (ACT, International, National, NSW, NT, QLD, SA, TAS, VIC, WE): "))
-                if new_state.lower() in state_au:
+                if new_state.upper() in state_au:
                     break
                 else:
-                    print("Please enter the right state")
+                    raise ValueError
             except ValueError:
-                print("Enter the right format")
+                print("Enter the right state")
         while True:
             try:
                 new_status = str(input("Please enter status of the project (REGISTERED/ CERTIFIED): "))
                 if new_status.lower() == "registered" or new_status.lower() == "certified":
                     break
                 else:
-                    print("Please enter REGISTERED or CERTIFIED")
+                    raise ValueError
             except ValueError:
-                print("Enter the right format")
+                print("Please enter REGISTERED or CERTIFIED")
         # while loop to get the right input datatype
         # try except to handle error
         while True:
             try:
-                new_stars = int(input("Please enter project Green Star rating: "))
-                break
+                new_stars = int(input("Please enter project Green Star rating (1 to 6): "))
+                if new_stars in range(1, 6):
+                    break
+                else:
+                    raise ValueError
             except ValueError:
-                print("Please enter a number")
+                print("Please enter a number in range")
                 
         while True:
             try:        
-                new_score = int(input("Please enter project final score: "))
-                break
+                new_score = str(input("Please enter project final score (0 - 100) or NA: "))
+                if new_score == "NA":
+                    break
+                elif int(new_score) in range(0, 100):
+                    break
+                else: raise ValueError
             except ValueError:
-                print("Please enter a number")
+                print("Please enter a number in range or NA")
         
         while True:
             new_date = input("Please enter certified date (DD/MM/YYYY): ")
@@ -72,7 +79,15 @@ class Menu:
             except ValueError:
                 print("Please enter the right date format")
         
-        new_tool = str(input("Please enter project rating tool: "))
+        while True:
+            tool_ver = ["v3", "v2", "v0.1", "v0.2", "v1", "v1.1", "v1.2", "v1.2.0", "v1.3", "PILOT v0.0", "PILOT v0.1", "PILOT v0.2"]
+            try:
+                new_tool = str(input("Please enter project rating tool \n(v0.1, v0.2, v1, v2, v3, v1.1, v1.2, v1.3, v1.2.0, PILOT v0.0, PILOT v0.1, PILOT v0.2): "))
+                if new_tool.lower() in tool_ver:
+                    break
+                else: raise ValueError
+            except ValueError:
+                print("Please enter existing version number")
         new_company = str(input("What is the main company of this project?: "))
         
         # add to organizations list in system class
