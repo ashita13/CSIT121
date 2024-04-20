@@ -155,7 +155,8 @@ class Menu:
         file_path = os.path.join(script_dir, f"PROJECT_{p_title}_REPORT.txt")
         
         if project:
-            with open(file_path, "w") as file:
+            # add file to the current script folder with write only mode
+            with open(file_path, "w", encoding="utf-8") as file:
                 file.write(f"Project title: {project.get_project_title()}\n")
                 file.write(f"Location: {project.get_location()}\n")
                 file.write(f"Status: {(project.get_status()).upper()}\n")
@@ -168,6 +169,7 @@ class Menu:
                 file.write("Role of each organizations \n")
                 for org in orgs:
                     file.write(f"{org}: {self.role.get_role(org)}\n")
+                file.close()
         else: 
             print("This project is not in the system.")
         self.run()
