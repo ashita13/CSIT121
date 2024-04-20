@@ -4,6 +4,7 @@ from system.organization.organization import Organization
 from datetime import datetime
 # sys for the quit function
 import sys
+import os
 
 class Menu:
     def __init__(self):
@@ -13,7 +14,7 @@ class Menu:
     # while loop to get correct input
     def run(self):
             while True:
-                choice = str(input("Please enter the service you want (add, search, role or X to quit): "))
+                choice = str(input("Please enter the service you want (add, search, role, generate report or X to quit): "))
                 if choice.lower() == "add":
                     self.add_project()
                 elif choice.lower() == "search":
@@ -22,6 +23,8 @@ class Menu:
                     self.quit()
                 elif choice.lower() == "role":
                     self.show_orgs_involved_with_roles()
+                elif choice.lower() == "generate report":
+                    self.gen_report()
                 elif choice.lower() != "add" or "search" or "x":
                     self.run()
             
@@ -34,6 +37,7 @@ class Menu:
             try:    
                 new_state = str(input("Please enter state (ACT, International, National, NSW, NT, QLD, SA, TAS, VIC, WE): "))
                 if new_state.upper() in state_au:
+                    new_location += f", {new_state}"
                     break
                 else:
                     raise ValueError
@@ -139,6 +143,35 @@ class Menu:
                 print(f"{org}: {self.role.get_role(org)}")
             else: return "Project not found"
 
+    def gen_report(self):
+        # same code as in search fucntion
+        p_title = str(input("Please enter the project name: "))
+        project = self.system.get_project(p_title)
+        orgs = (self.system.get_org(p_title))
+        
+        # the directory of this Python script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # create an absolute path to the txt file
+        file_path = os.path.join(script_dir, f"PROJECT_{p_title}_REPORT.txt")
+        
+        if project:
+            with open(file_path, "w") as file:
+                file.write(f"Project title: {project.get_project_title()}\n")
+                file.write(f"Location: {project.get_location()}\n")
+                file.write(f"Status: {(project.get_status()).upper()}\n")
+                file.write(f"Green Star rating: {project.get_star()}\n")
+                file.write(f"Final score: {project.get_score()}\n")
+                file.write(f"Certified date: {project.get_date_certified()}\n")
+                file.write(f"Rating tool: {project.get_rating_tool()}\n")
+                file.write(f"Main company: {project.get_company()}\n")
+                file.write(f"Organizations involved: {self.system.display_organ(p_title)}\n")
+                file.write("Role of each organizations \n")
+                for org in orgs:
+                    file.write(f"{org}: {self.role.get_role(org)}\n")
+        else: 
+            print("This project is not in the system.")
+        self.run()
+    
     # quit function to exit the program
     def quit(self):
         print("Successfully quit") 
