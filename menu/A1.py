@@ -29,6 +29,16 @@ class Menu:
         print("Now you can add new project")
         new_ptitle = str(input("Please enter new project name: "))
         new_location = str(input("Please enter location of the project: "))
+        state_au = ["ACT", "International", "National", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WE"]
+        while True:
+            try:    
+                new_state = str(input("Please enter state (ACT, International, National, NSW, NT, QLD, SA, TAS, VIC, WE): "))
+                if new_state.lower() in state_au:
+                    break
+                else:
+                    print("Please enter the right state")
+            except ValueError:
+                print("Enter the right format")
         while True:
             try:
                 new_status = str(input("Please enter status of the project (REGISTERED/ CERTIFIED): "))
