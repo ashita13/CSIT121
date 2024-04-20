@@ -1,7 +1,8 @@
 import unittest
 
-# define a test project class with outputs
+# define a test project class with default outputs
 class TestProject:
+        
     def get_project_title(self):
         return "Project Test"
     
@@ -27,7 +28,7 @@ class TestProject:
         return "COMPANY"
 
 # Define test case for search function
-class TestMenu(unittest.TestCase):
+class TestSearch(unittest.TestCase):
     
     def setUp(self):
         self.testproject = TestProject()
