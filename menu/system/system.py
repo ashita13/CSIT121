@@ -1,5 +1,4 @@
 from system.company.project.project import Project
-from system.organization.organization import Organization
 class System:
     # create a projects list
     def __init__(self):
