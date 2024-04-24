@@ -1,5 +1,102 @@
 import unittest
-from A1 import Project, Company, System, Organization
+# from A1 import Project, Company, System, Organization
+
+class Project:
+    def __init__(self, project_title, location, star, score, date_certified, rating_tool, company, status=""):
+        self.project_title = project_title
+        self.location = location
+        self.star = star
+        self.score = score
+        self.date_certified = date_certified
+        self.rating_tool = rating_tool
+        self.status = status
+        self.company = company
+        
+    def get_project_title(self):
+        return self.project_title
+    def get_location(self):
+        return self.location
+    def get_status(self):
+        return self.status
+    def get_star(self):
+        return self.star
+    def get_score(self):
+        return self.score
+    def get_date_certified(self):
+        return self.date_certified
+    def get_rating_tool(self):
+        return self.rating_tool
+    def get_company(self):
+        return self.company
+    
+class Company:
+    
+    def __init__(self, company_name):
+        self.company_name = company_name
+        self.company_list = {}
+    
+    def record_company(self, project_title):
+        if project_title not in self.company_list:
+            self.company_list[project_title] = []
+        self.company_list[project_title].append(self.company_name)
+
+class System:
+    # create a projects list
+    def __init__(self):
+        self.projects = []
+        self.organs = {}
+        
+    # add project to system projects list
+    def add_project(self, project_title, location, star, score, date_certified, rating_tool, company, status=""):
+        project = Project(project_title, location, star, score, date_certified, rating_tool, company, status)
+        self.projects.append(project)
+        
+    # define search function to get the specific project title
+    def get_project(self, p_title):
+        for project in self.projects:
+            if project.get_project_title() == p_title:
+                return project
+        return None
+    
+    # p_title need to establish first when its not in the dictionary
+    def add_organ(self, p_title, organ_name):
+        if p_title not in self.organs:
+            self.organs[p_title] = []
+        self.organs[p_title].append(organ_name)
+    
+    # get the value of the p_title key so the output is not 
+    # showing all the available organizations
+    def display_organ(self, p_title):
+        output_organ = self.organs.get(p_title)
+        if output_organ:
+            return ", ".join(output_organ)
+        else: return "None"
+    
+    # get value according to key project title
+    def get_org(self, p_title):
+        output_organ = self.organs.get(p_title)
+        return output_organ
+    
+class Organization:
+    def __init__(self):
+        self.role = {}
+    
+    # add role value by organization name
+    def add_role(self, organ_name, role):
+        role_name = self.role.get(role)
+        if role_name not in self.role:
+            self.role[organ_name] = []
+        # append to value of key so this key's value is a list
+        self.role[organ_name].append(role)
+
+    # get the according role with organization name
+    def get_role(self, organ_name):
+        output_role = self.role.get(organ_name)
+        if output_role:
+            return "".join(output_role)
+        else: return "None"
+    
+
 
 # define a test project class with default outputs
 class TestProject:
