@@ -9,6 +9,10 @@ class System:
     def add_project(self, project_title, location, star, score, date_certified, rating_tool, company, status=""):
         project = Project(project_title, location, star, score, date_certified, rating_tool, company, status)
         self.projects.append(project)
+    
+    # load project from JSON file 
+    def load_project(self, project_file):
+        self.projects.append(project_file)
         
     # define search function to get the specific project title
     def get_project(self, p_title):
@@ -22,7 +26,7 @@ class System:
         if p_title not in self.organs:
             self.organs[p_title] = []
         self.organs[p_title].append(organ_name)
-    
+        
     # get the value of the p_title key so the output is not 
     # showing all the available organizations
     def display_organ(self, p_title):

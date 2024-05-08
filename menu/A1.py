@@ -1,10 +1,13 @@
 from system.system import System
 from system.organization.organization import Organization
+from system.company.project.project import Project
 # datetime for the time format
 from datetime import datetime
 # sys for the quit function
 import sys
 import os
+import json
+import matplotlib.pyplot as plt
 
 class Menu:
     def __init__(self):
@@ -14,8 +17,10 @@ class Menu:
     # while loop to get correct input
     def run(self):
             while True:
-                choice = str(input("Please enter the service you want (add, search, role, generate report or X to quit): "))
-                if choice.lower() == "add":
+                choice = str(input("Please enter the service you want (load, add, search, role, generate report, chart or X to quit): "))
+                if choice.lower() == "load":
+                    self.load_data()
+                elif choice.lower() == "add":
                     self.add_project()
                 elif choice.lower() == "search":
                     self.search_project()
@@ -25,8 +30,38 @@ class Menu:
                     self.show_orgs_involved_with_roles()
                 elif choice.lower() == "generate report":
                     self.gen_report()
-                elif choice.lower() != "add" or "search" or "x":
+                elif choice.lower() == "chart":
+                    self.chart()
+                elif choice.lower() != "add" or "search" or "x" or "load" or "role" or "generate report":
                     self.run()
+    
+    def load_data(self):
+        # the directory of this Python script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # create an absolute path to the txt file
+        file_path = os.path.join(script_dir, f"projects_data.json")
+        # check if this file exist in the given path
+        if os.path.exists(file_path):
+            with open(file_path, "r") as file:
+                print("Load successfully")
+                projects_data = json.load(file)
+            
+            # for loop to read data of a dict
+            for project_json in projects_data["project"]:
+                project = Project(project_json["project_title"], 
+                                    project_json["location"], 
+                                    project_json["star"],
+                                    project_json["score"], 
+                                    project_json["date"], 
+                                    project_json["tool"], 
+                                    project_json["company"], 
+                                    project_json["status"])
+                # load project into system class project list
+                self.system.load_project(project)
+                self.system.add_organ(project_json["project_title"], project_json["organization"])
+        else: return "No existing file found"
+        
+        
             
     def add_project(self):
         print("Now you can add new project")
@@ -57,7 +92,7 @@ class Menu:
         while True:
             try:
                 new_stars = int(input("Please enter project Green Star rating (1 to 6): "))
-                if new_stars in range(1, 6):
+                if new_stars in range(1, 7):
                     break
                 else:
                     raise ValueError
@@ -84,9 +119,9 @@ class Menu:
                 print("Please enter the right date format")
         
         while True:
-            tool_ver = ["v3", "v2", "v0.1", "v0.2", "v1", "v1.1", "v1.2", "v1.2.0", "v1.3", "PILOT v0.0", "PILOT v0.1", "PILOT v0.2"]
+            tool_ver = ["communities", "custom", "design & as built", "green star buildings", "green star homes", "green star performance", "interiors", "legacy", "perfomance", "railway stations"]
             try:
-                new_tool = str(input("Please enter project rating tool \n(v0.1, v0.2, v1, v2, v3, v1.1, v1.2, v1.3, v1.2.0, PILOT v0.0, PILOT v0.1, PILOT v0.2): "))
+                new_tool = str(input("Please enter project rating tool \n(Communities, Custom, Design & As Built, Green Star Buildings, Green Star Homes, Green Star Performance, Interiors, Legacy, Perfomance, Railway Stations): "))
                 if new_tool.lower() in tool_ver:
                     break
                 else: raise ValueError
@@ -110,6 +145,65 @@ class Menu:
         # add project to the System class list
         self.system.add_project(new_ptitle, new_location, new_stars, new_score, new_date, new_tool, new_company, new_status)
         
+        # _SAVE_DATA_TO_A_JSON_FILE_______________________________________________________________________
+        # OBJECT serialization and desrialization using JSON
+        # the directory of this Python script
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        # create an absolute path to the txt file
+        file_path = os.path.join(script_dir, f"projects_data.json")
+        # check if this file exist in the given path
+        if os.path.exists(file_path):
+            with open(file_path, "r") as file:
+                existing_data = json.load(file)
+                # append to "project" key in json file
+                existing_data["project"].append({
+                                "project_title": new_ptitle,
+                                "location": new_state,
+                                "status": new_status,
+                                "star": new_stars,
+                                "score": int(new_score),
+                                "date": new_date,
+                                "tool": new_tool,
+                                "company": new_company,
+                                "organization": new_organization
+                            })
+                # write to file
+                with open(file_path, "w") as file:
+                    json.dump(existing_data, file, indent=4)
+        # if this json file not exist
+        else:   
+            # create a json file
+            with open(file_path, "w") as file:
+                # Create a template of JSON file
+                initial_data = '''
+                    {
+                        "project": [
+                            
+                        ]
+                    }
+                '''
+                
+                # Load the initial string of this file
+                new_data = json.loads(initial_data)
+                # Add new data to project in this json file
+                new_data["project"].append({
+                                "project_title": f"{new_ptitle}",
+                                "location": f"{new_state}",
+                                "status": f"{new_status}",
+                                "star": new_stars,
+                                "score": int(new_score),
+                                "date": f"{new_date}",
+                                "tool": f"{new_tool}",
+                                "company": f"{new_company}",
+                                "organization": f"{new_organization}"
+                            })
+                # add new string to project with indentation
+                new_json = json.dumps(new_data, indent=4)
+                # write to json file
+                file.write(new_json)  
+        
+        
+    
     # search function that collect project datas from project module
     def search_project(self):
         p_title = str(input("Please enter the project name: "))
@@ -174,6 +268,80 @@ class Menu:
             print("This project is not in the system.")
         self.run()
     
+    # _MAKE_CHARTS_WITH_JSON_DATA___________________________________________________________________________________
+    def chart(self):
+        # load the JSON file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, f"projects_data.json")
+        if os.path.exists(file_path):
+            with open(file_path, "r") as file:
+                projects = json.load(file)
+                # create variable to "project" value of Json file
+                project_list = projects["project"]
+        while True:
+            try:
+                # create 4 choices
+                choice = int(input("Select Pie chart (1), Bar chart (2) or Line chart (3) or return to menu (0): "))
+                if choice == 1:
+                    certified_tool = {}
+                    for project in project_list:
+                        if project["status"] == "certified":
+                            tool = project["tool"]
+                            if tool in certified_tool:
+                                certified_tool[tool] += 1
+                            else: certified_tool[tool] = 1
+                    labels = certified_tool.keys()
+                    sizes = certified_tool.values()
+                    # plot the chart
+                    plt.figure(figsize=(8, 6))
+                    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+                    plt.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+                    plt.title("Certified Ratings Issued By Tool")
+                    plt.show()
+                elif choice == 2:
+                    certified_state = {}
+                    for project in project_list:
+                        if project["status"] == "certified":
+                            state = project["location"]
+                            if state in certified_state:
+                                certified_state[state] += 1
+                            else: certified_state[state] = 1
+                    # for loop to make the state uppercase
+                    certified_state_upper = {key.upper(): value for key, value in certified_state.items()}
+                    certified_state_abs_int = {key: int(abs(value)) for key, value in certified_state.items()}
+                    # plot the chart 
+                    plt.figure(figsize=(10, 6))
+                    plt.bar(certified_state_upper.keys(), certified_state_abs_int.values(), color='skyblue')
+                    plt.xlabel('State')
+                    plt.ylabel('Number of Certified Ratings')
+                    plt.title('Certified Ratings Issued by State')
+                    plt.show()
+                elif choice == 3:
+                    registered_tool = {}
+                    for project in project_list:
+                        if project["status"] == "registered":
+                            tool = project["tool"]
+                            if tool in registered_tool:
+                                registered_tool[tool] +=1
+                            else: registered_tool[tool] = 1
+                    
+                    registered_tool = dict(sorted(registered_tool.items()))
+                    # plot the chart
+                    plt.figure(figsize=(10, 6))
+                    plt.plot(registered_tool.keys(), registered_tool.values(), marker='o', linestyle='-')
+                    plt.xlabel('Tool')
+                    plt.ylabel('Number of Registered Ratings')
+                    plt.title('Registered Ratings by Tool')
+                    plt.xticks(rotation=0)
+                    plt.grid(True)
+                    plt.show()
+                elif choice == 0:
+                    self.run()
+                else: raise ValueError
+            except ValueError: 
+                print("Please enter number 1, 2, 3 or 0")
+        
+            
     # quit function to exit the program
     def quit(self):
         print("Successfully quit") 
