@@ -8,4 +8,4 @@ levels of achievement.
 
 This program can add, search projects and search for roles according to the organization involved in each project.
 
-Run this program on terminal: python3 A1.py
+Run this program on bash terminal: python3 A1.py
